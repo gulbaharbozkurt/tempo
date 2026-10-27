@@ -1,5 +1,5 @@
-const C = 'etut-v7';
-const FILES = ['./', 'index.html', 'app.js', 'xlsx.full.min.js', 'manifest.webmanifest', 'icon.svg'];
+const C = 'tempo-v8';
+const FILES = ['./', 'index.html', 'app.js', 'xlsx.full.min.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))));
 // Önce ağ (güncelleme gelsin), yoksa önbellek (internetsiz çalışsın)

@@ -1,4 +1,4 @@
-// Etüt Sayacı — tüm veri tabletin localStorage'ında tutulur.
+// Tempo — tüm veri tabletin localStorage'ında tutulur.
 const KEY = 'etut-sayaci-v1';
 let studies = load();
 let openId = null; // detay ekranındaki etüt
@@ -139,7 +139,7 @@ function draw() {
   document.getElementById('back').hidden = !s;
   document.getElementById('newStudy').hidden = !!s;
   document.getElementById('exportAll').textContent = s ? 'Excel' : 'Excel (tümü)';
-  document.getElementById('title').textContent = s ? s.name : 'Etüt Sayacı';
+  document.getElementById('title').textContent = s ? s.name : '⚑ Tempo';
   if (s) return renderDetail(s);
   if (!studies.length) { app.innerHTML = '<div class="empty">Henüz etüt yok. “+ Yeni etüt” ile başlayın.</div>'; return; }
   app.innerHTML = '<div class="grid">' + studies.map(s => {
