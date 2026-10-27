@@ -51,8 +51,10 @@ function pause(s) {
   s.segments.at(-1).end = now(); s.status = 'paused'; log(s, 'duraklat', fmt(elapsed(s))); save(); render();
 }
 function flag(s) {
-  const l = { id: uid(), no: s.laps.length + 1, elapsed: elapsed(s), at: now(), note: '', deleted: false };
-  s.laps.push(l); log(s, 'bayrak', '#' + l.no + ' ' + fmt(l.elapsed)); save(); render();
+  const l = { id: uid(), no: s.laps.length + 1, elapsed: elapsed(s), at: now(), note: s.pendingNote || '', deleted: false };
+  if (l.note) l.loggedNote = l.note;
+  s.pendingNote = '';
+  s.laps.push(l); log(s, 'bayrak', '#' + l.no + ' ' + fmt(l.elapsed) + (l.note ? ' · ' + l.note : '')); save(); render();
 }
 function finish(s) {
   if (s.status === 'running') s.segments.at(-1).end = now();
@@ -128,9 +130,9 @@ function controls(s, big) {
 }
 
 function render() {
-  const f = document.activeElement, keep = (f?.dataset?.note || f?.dataset?.meaning) ? { id: f.dataset.note || f.dataset.meaning, a: f.selectionStart, b: f.selectionEnd } : null;
+  const f = document.activeElement, keep = (f?.dataset?.note || f?.dataset?.meaning || f?.dataset?.pend) ? { id: f.dataset.note || f.dataset.meaning || f.dataset.pend, a: f.selectionStart, b: f.selectionEnd } : null;
   draw();
-  if (keep) { const el = app.querySelector(`[data-note="${keep.id}"],[data-meaning="${keep.id}"]`); if (el) { el.focus(); el.setSelectionRange(keep.a, keep.b); } }
+  if (keep) { const el = app.querySelector(`[data-note="${keep.id}"],[data-meaning="${keep.id}"],[data-pend="${keep.id}"]`); if (el) { el.focus(); el.setSelectionRange(keep.a, keep.b); } }
 }
 function draw() {
   const s = openId && byId(openId);
@@ -159,8 +161,12 @@ function draw() {
 function lapList(s) {
   const p = n => String(n).padStart(2, '0');
   const rows = lapRows(s).reverse();
-  if (!rows.length) return '';
-  return `<table class="laps"><tbody>${rows.map(r => `<tr class="${r.tag ? 'tagged' : ''}">
+  const next = s.status === 'finished' ? '' : `<tr class="next">
+    <td></td><td class="no">${p(rows.length + 1)}</td><td data-tur="${s.id}">${fmt(elapsed(s) - (rows[0]?.elapsed || 0))}</td>
+    <td class="sub" data-t="${s.id}">${fmt(elapsed(s))}</td>
+    <td><input data-pend="${s.id}" value="${esc(s.pendingNote)}" placeholder="sıradaki not"></td><td></td></tr>`;
+  if (!rows.length && !next) return '';
+  return `<table class="laps"><tbody>${next}${rows.map(r => `<tr class="${r.tag ? 'tagged' : ''}">
     <td><button class="tag ${r.tag ? 'on' : ''}" data-a="tag" data-id="${s.id}" data-lap="${r.id}">●</button></td>
     <td class="no">${p(r.sira)}</td><td>${fmt(r.tur)}</td><td class="sub">${fmt(r.elapsed)}</td>
     <td><input data-note="${r.id}" data-id="${s.id}" value="${esc(r.note)}" placeholder="not"></td>
@@ -196,10 +202,11 @@ app.addEventListener('click', e => {
   else if (a === 'rename') rename(s);
   else if (a === 'remove') removeStudy(s);
 });
-app.addEventListener('input', e => { const d = e.target.dataset; if (d.note) setNote(byId(d.id), d.note, e.target.value, false); });
+app.addEventListener('input', e => { const d = e.target.dataset;
+  if (d.pend) { byId(d.pend).pendingNote = e.target.value; save(); } if (d.note) setNote(byId(d.id), d.note, e.target.value, false); });
 app.addEventListener('change', e => { const d = e.target.dataset;
   if (d.meaning) { const s = byId(d.meaning); s.tagMeaning = e.target.value; log(s, 'etiket anlamı', e.target.value); save(); } if (d.note) setNote(byId(d.id), d.note, e.target.value, true); });
-app.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.dataset.note || e.target.dataset.meaning)) e.target.blur(); });
+app.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.dataset.note || e.target.dataset.meaning || e.target.dataset.pend)) e.target.blur(); });
 document.getElementById('back').onclick = () => { openId = null; render(); };
 document.getElementById('newStudy').onclick = newStudy;
 document.getElementById('exportAll').onclick = () => exportXlsx(openId ? [byId(openId)] : studies);
@@ -207,6 +214,7 @@ document.getElementById('exportAll').onclick = () => exportXlsx(openId ? [byId(o
 // Sadece süre yazılarını günceller; not yazarken input'lar yeniden çizilmez.
 setInterval(() => {
   document.querySelectorAll('[data-t]').forEach(el => { const s = byId(el.dataset.t); if (s) el.textContent = fmt(elapsed(s)); });
+  document.querySelectorAll('[data-tur]').forEach(el => { const s = byId(el.dataset.tur); if (s) el.textContent = fmt(elapsed(s) - (visibleLaps(s).at(-1)?.elapsed || 0)); });
 }, 100);
 
 // Ekran kapanmasın (destekleniyorsa)
