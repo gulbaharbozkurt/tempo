@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2937">
+<title>Etüt Sayacı</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<style>
+  :root { --bg:#111827; --card:#1f2937; --line:#374151; --fg:#f9fafb; --mut:#9ca3af; --acc:#f59e0b; --ok:#10b981; --bad:#ef4444; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.4 system-ui, sans-serif; }
+  header { display:flex; gap:8px; align-items:center; padding:12px 16px; background:var(--card); position:sticky; top:0; z-index:5; }
+  header h1 { font-size:18px; margin:0; flex:1; }
+  button { font:inherit; border:0; border-radius:10px; padding:10px 14px; background:var(--line); color:var(--fg); cursor:pointer; }
+  button.acc { background:var(--acc); color:#111; font-weight:600; }
+  button.ok { background:var(--ok); color:#111; font-weight:600; }
+  button.bad { background:var(--bad); }
+  button:disabled { opacity:.35; }
+  main { padding:16px; }
+  .grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+  .card { background:var(--card); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .card .name { font-weight:600; cursor:pointer; text-decoration:underline dotted; }
+  .time { font-variant-numeric:tabular-nums; font-size:34px; font-weight:700; }
+  .big .time { font-size:64px; text-align:center; }
+  .sub { color:var(--mut); font-size:13px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; }
+  .row > button { flex:1; }
+  .flag { padding:22px; font-size:22px; }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  th { color:var(--mut); font-weight:500; font-size:13px; }
+  td input { width:100%; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:8px; font:inherit; }
+  td .del { padding:6px 10px; background:transparent; color:var(--bad); }
+  .badge { font-size:12px; padding:2px 8px; border-radius:999px; background:var(--line); }
+  .badge.running { background:var(--ok); color:#111; }
+  .badge.paused { background:var(--acc); color:#111; }
+  .laps td { padding:4px; } .laps .no { font-weight:700; color:var(--acc); width:32px; }
+  .card .laps { max-height:260px; overflow-y:auto; display:block; }
+  .tag { padding:4px 8px; background:transparent; color:var(--line); font-size:18px; }
+  .tag.on { color:var(--ok); } tr.tagged td { background:rgba(16,185,129,.12); }
+  .meaning { width:100%; background:var(--bg); color:var(--fg); border:1px dashed var(--ok); border-radius:8px; padding:8px; font:inherit; }
+  .empty { color:var(--mut); text-align:center; padding:40px 0; }
+</style>
+</head>
+<body>
+<header>
+  <button id="back" hidden>←</button>
+  <h1 id="title">Etüt Sayacı</h1>
+  <button id="exportAll">Excel (tümü)</button>
+  <button id="newStudy" class="acc">+ Yeni etüt</button>
+</header>
+<main id="app"></main>
+<script src="xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
