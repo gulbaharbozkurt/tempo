@@ -22,7 +22,9 @@
   main { padding:16px; }
   .grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
   .card { background:var(--card); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; }
-  .card .name { font-weight:600; cursor:pointer; text-decoration:underline dotted; }
+  .card .name { flex:1; min-width:0; font:inherit; font-weight:600; color:var(--fg); background:transparent; border:1px solid transparent; border-radius:8px; padding:6px 8px; }
+  .card .name:focus { border-color:var(--acc); background:var(--bg); outline:none; }
+  .card .open { padding:6px 10px; background:transparent; color:var(--mut); }
   .time { font-variant-numeric:tabular-nums; font-size:34px; font-weight:700; }
   .big .time { font-size:64px; text-align:center; }
   .sub { color:var(--mut); font-size:13px; }
@@ -55,6 +57,6 @@
 </header>
 <main id="app"></main>
 <script src="xlsx.full.min.js"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

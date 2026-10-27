@@ -130,9 +130,9 @@ function controls(s, big) {
 }
 
 function render() {
-  const f = document.activeElement, keep = (f?.dataset?.note || f?.dataset?.meaning || f?.dataset?.pend) ? { id: f.dataset.note || f.dataset.meaning || f.dataset.pend, a: f.selectionStart, b: f.selectionEnd } : null;
+  const f = document.activeElement, keep = (f?.dataset?.note || f?.dataset?.meaning || f?.dataset?.pend || f?.dataset?.name) ? { id: f.dataset.note || f.dataset.meaning || f.dataset.pend || f.dataset.name, a: f.selectionStart, b: f.selectionEnd } : null;
   draw();
-  if (keep) { const el = app.querySelector(`[data-note="${keep.id}"],[data-meaning="${keep.id}"],[data-pend="${keep.id}"]`); if (el) { el.focus(); el.setSelectionRange(keep.a, keep.b); } }
+  if (keep) { const el = app.querySelector(`[data-note="${keep.id}"],[data-meaning="${keep.id}"],[data-pend="${keep.id}"],[data-name="${keep.id}"]`); if (el) { el.focus(); el.setSelectionRange(keep.a, keep.b); } }
 }
 function draw() {
   const s = openId && byId(openId);
@@ -146,7 +146,8 @@ function draw() {
     const last = lapRows(s).at(-1);
     return `<div class="card">
       <div class="row" style="justify-content:space-between;align-items:center">
-        <span class="name" data-a="open" data-id="${s.id}">${esc(s.name)}</span>
+        <input class="name" data-name="${s.id}" value="${esc(s.name)}" title="Adı düzenle">
+        <button class="open" data-a="open" data-id="${s.id}" title="Büyük ekran">⤢</button>
         <span class="badge ${s.status}">${durum(s)}</span>
       </div>
       <div class="time" data-t="${s.id}">${fmt(elapsed(s))}</div>
@@ -205,8 +206,9 @@ app.addEventListener('click', e => {
 app.addEventListener('input', e => { const d = e.target.dataset;
   if (d.pend) { byId(d.pend).pendingNote = e.target.value; save(); } if (d.note) setNote(byId(d.id), d.note, e.target.value, false); });
 app.addEventListener('change', e => { const d = e.target.dataset;
+  if (d.name) { const s = byId(d.name), n = e.target.value.trim(); if (n && n !== s.name) { log(s, 'yeniden adlandır', s.name + ' → ' + n); s.name = n; save(); } else e.target.value = s.name; }
   if (d.meaning) { const s = byId(d.meaning); s.tagMeaning = e.target.value; log(s, 'etiket anlamı', e.target.value); save(); } if (d.note) setNote(byId(d.id), d.note, e.target.value, true); });
-app.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.dataset.note || e.target.dataset.meaning || e.target.dataset.pend)) e.target.blur(); });
+app.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.dataset.note || e.target.dataset.meaning || e.target.dataset.pend || e.target.dataset.name)) e.target.blur(); });
 document.getElementById('back').onclick = () => { openId = null; render(); };
 document.getElementById('newStudy').onclick = newStudy;
 document.getElementById('exportAll').onclick = () => exportXlsx(openId ? [byId(openId)] : studies);
