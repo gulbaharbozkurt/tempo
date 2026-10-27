@@ -148,6 +148,7 @@ function draw() {
       <div class="row" style="justify-content:space-between;align-items:center">
         <input class="name" data-name="${s.id}" value="${esc(s.name)}" title="Adı düzenle">
         <button class="open" data-a="open" data-id="${s.id}" title="Büyük ekran">⤢</button>
+        <button class="open" data-a="remove" data-id="${s.id}" title="Etüdü sil">🗑</button>
         <span class="badge ${s.status}">${durum(s)}</span>
       </div>
       <div class="time" data-t="${s.id}">${fmt(elapsed(s))}</div>
